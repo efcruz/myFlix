@@ -3,6 +3,26 @@
 <head>
   <meta charset="utf-8">
   <title>documentation</title>
+  <style>
+    body {
+      font-family: arial, sans-serif;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    
+    td, th {
+      border: 1px solid #000000;
+      text-align: left;
+      padding: 8px;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    </style>
 </head>
 <body> 
     <h1>myFlix Documentation</h1>
@@ -10,5 +30,123 @@
         Web application that provides access to information about different movies, directors, and genres. <br>
         Users are able to sign up, update their personal information, and create a list of their favourite movies. <br>
     </p>
+  <table>
+    <tr>
+      <th>Request </th>
+      <th>URL </th>
+      <th>HTTP Method</th>
+      <th>Request body data format</th>
+      <th>Response body data format</th>
+    </tr>
+    <tr>
+      <td>Get a list of all movies</td>
+      <td>/movies</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data about all the movies</td>
+    </tr>
+    <tr>
+      <td>Get data about a single movie by title</td>
+      <td>/movies/[title]</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data
+        about a single movie,
+        containing a title, description, genre, director and imageUrl properties. Example:</br> 
+        {title: 'Inglourious Basterds',
+          description: '#',
+          genre: {
+              name: 'Drama',
+              description: '#',
+          },
+          director: {
+              name: 'Quentin Tarantino',
+              bio: '#',
+          },
+          imageUrl: '#'}
+      </td>
+    </tr>
+    <tr>
+      <td>Get data about a genre </br>(description) by name/title</td>
+      <td>/movies/genre/[genreName]</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data
+        about a single genre,
+        containing a name and a description property. Example:</br> 
+        genre: {
+          name: 'Drama',
+          description: '#'}
+      </td>
+    </tr>
+    <tr>
+      <td>Get data about a director </br>(bio, birth year, death year) by name</td>
+      <td>/movies/director/[directorName]</td>
+      <td>GET</td>
+      <td>None</td>
+      <td>A JSON object holding data
+        about a single director,
+        containing a name and a bio property. Example:</br> 
+        director: {
+          name: 'Quentin Tarantino',
+          bio: '#'}
+      </td>
+    </tr>
+    <tr>
+      <td>Add new user</td>
+      <td>/users</td>
+      <td>POST</td>
+      <td>A JSON object holding data about the user to add structured like: </br> 
+        {id: 1,
+        name: 'Kim',
+        favouriteMovies: []}
+      </td>
+      <td>A JSON object holding data
+        about the new user,
+        containing an ID, name and a favourite movie property. Example:</br> 
+        {id: 1,
+        name: 'Kim',
+        favouriteMovies: []}
+      </td>
+    </tr>
+    <tr>
+      <td>Update user info (username)</td>
+      <td>/users/[id]</td>
+      <td>PUT</td>
+      <td>A JSON object holding new data about the user to add structured like:
+        {id: 1, name: 'Kim', favouriteMovies: []}</td>
+      <td>A JSON object holding data
+        about the updated user,
+        containing an ID, name and a favourite movie property. Example:</br> 
+        {id: 1,
+        name: 'Kim',
+        favouriteMovies: []}
+      </td>
+    </tr>
+    <tr>
+      <td>Add a movie to the list of favorites</td>
+      <td>/users/[id]/[movieTitle]</td>
+      <td>POST</td>
+      <td>None</td>
+      <td>A text message indicating
+        the movie was successfully added to favorites</td>
+    </tr>
+    <tr>
+      <td>Remove a movie from the list of favorites</td>
+      <td>/users/[id]/[movieTitle]</td>
+      <td>DELETE</td>
+      <td>None</td>
+      <td>A text message indicating
+        the movie was successfully removed of favorites</td>
+    </tr>
+    <tr>
+      <td>Delete user by ID</td>
+      <td>/users/[id]</td>
+      <td>DELETE</td>
+      <td>None</td>
+      <td>A text message indicating
+        the user was successfully deleted</td>
+    </tr>
+  </table>
 </body>
 </html>
