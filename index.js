@@ -4,6 +4,8 @@ const Models = require('./models.js'); // require the file with models I created
 const Movies = Models.Movie; //specify which models to use within the models.js file
 const Users = Models.User;
 
+const { check, validationResult } = require('express-validator');
+
 mongoose.connect('mongodb://localhost:27017/myFlixDB',{ //allows Mongoose to connect with MongoDB so it can perform CRUD
     useNewUrlParser: true, useUnifiedTopology: true
 });
@@ -15,12 +17,32 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+const cors = require('cors');
+//set the application to allow requests from all origins:
+app.use(cors());
+
+//restrict origins:
+/*let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if(!origin) return callback(null, true);
+        if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
+
+            let message = 'The CORS policy for this application doesn\'t allow acess from origin ' + origin;
+            return callback(new Error(message ), false);
+        }
+        return callback(null, true);
+    }
+}));*/
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 let auth = require('./auth')(app);
 
 const passport = require('passport');
+const { castArray } = require('lodash');
 require('./passport');
 
 //logging with Morgan
@@ -120,7 +142,21 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 //CREATE - Allow new users to register
-app.post('/users', (req, res) => {
+app.post('/users', 
+[
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+],(req, res) => {
+
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+    let hashedPassword = Users.hashPassword(req.body.Password);
    Users.findOne({ Username: req.body.Username }) //check if username already exists
     .then((user) => {
         if (user) {
@@ -129,7 +165,7 @@ app.post('/users', (req, res) => {
             Users
                 .create({
                     Username: req.body.Username,
-                    Password: req.body.Password,
+                    Password: hashedPassword,
                     Email: req.body.Email,
                     Birthday: req.body.Birthday
                 })
@@ -148,7 +184,20 @@ app.post('/users', (req, res) => {
 });
 
 //UPDATE - Allow users to update their user info (username)
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), 
+[
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+], (req, res) => {
+
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
     Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
         {
             Username: req.body.Username,
