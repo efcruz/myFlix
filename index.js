@@ -6,7 +6,11 @@ const Users = Models.User;
 
 const { check, validationResult } = require('express-validator');
 
-mongoose.connect('mongodb://localhost:27017/myFlixDB',{ //allows Mongoose to connect with MongoDB so it can perform CRUD
+/*mongoose.connect('mongodb://localhost:27017/myFlixDB',{ //allows Mongoose to connect with MongoDB so it can perform CRUD
+    useNewUrlParser: true, useUnifiedTopology: true
+});*/
+
+mongoose.connect( process.env.CONNECTION_URI, { //allows Mongoose to connect with MongoDB Atlas so it can perform CRUD
     useNewUrlParser: true, useUnifiedTopology: true
 });
 
