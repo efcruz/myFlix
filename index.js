@@ -63,7 +63,20 @@ app.get('/', (req, res) => {
 });
 
 //READ - Return a list of ALL movies to the user
-app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+//(temporary code for react App run without authentication)
+app.get("/movies", function (req, res) {
+    Movies.find()
+      .then(function (movies) {
+        res.status(201).json(movies);
+      })
+      .catch(function (error) {
+        console.error(error);
+        res.status(500).send("Error: " + error);
+      });
+  });
+
+//(with authentication: waiting to be restored)
+/*app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
         .then((movies) => {
             res.status(201).json(movies);
@@ -72,20 +85,9 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
             console.error(err);
             res.status(500).send("Error " + err);
         });
-});
-
-//READ - Return data about a single movie by title to the user
-/*app.get('/movies/:title', (req, res) => {
-    const { title } = req.params; //Object destructuring. Same as: const title = req.params.title;
-    const movie = movies.find( movie => movie.title === title );
-
-    if (movie) {
-        res.status(200).json(movie);
-    } else {
-        res.status(400).send('movie does not exist');
-    }
 });*/
 
+//READ - Return data about a single movie by title to the user
 app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
