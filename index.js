@@ -23,7 +23,9 @@ const app = express();
 
 const cors = require('cors');
 //set the application to allow requests from all origins:
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 
 //restrict origins:
 /*let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
@@ -64,7 +66,7 @@ app.get('/', (req, res) => {
 
 //READ - Return a list of ALL movies to the user
 //(temporary code for react App run without authentication)
-app.get("/movies", function (req, res) {
+/*app.get("/movies", function (req, res) {
     Movies.find()
       .then(function (movies) {
         res.status(201).json(movies);
@@ -73,10 +75,10 @@ app.get("/movies", function (req, res) {
         console.error(error);
         res.status(500).send("Error: " + error);
       });
-  });
+  });*/
 
-//(with authentication: waiting to be restored)
-/*app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+//(with authentication:)
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
         .then((movies) => {
             res.status(201).json(movies);
@@ -85,7 +87,7 @@ app.get("/movies", function (req, res) {
             console.error(err);
             res.status(500).send("Error " + err);
         });
-});*/
+});
 
 //READ - Return data about a single movie by title to the user
 app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
